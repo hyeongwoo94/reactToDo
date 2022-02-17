@@ -1,26 +1,24 @@
-import React from "react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import styled from "styled-components";
+import { useRecoilValue } from "recoil";
+import { toDoState } from "../atoms";
+import MakeToDo from "./MakeToDo";
+
+import ToDo from "./ToDo";
 
 
-interface IForm{
-  toDo:string;
-}
+
+
 
 function ToDoList () {
-  const {register,handleSubmit, setValue} =useForm<IForm>();
-  const handleValid = (data:IForm) => {
-    console.log("추가된 리스트",data.toDo)
-    setValue("toDo","")
-  }
+  const toDos = useRecoilValue(toDoState);
+  
   return (
     <div>
-      <form onSubmit={handleSubmit(handleValid)}>
-        <input {...register("toDo",{required:"작성해주세요"})} placeholder="리스트 작성하기" />
-        <button>추가하기</button>
-       
-      </form>
+      <h1>해야할일</h1>
+      <hr />
+      <MakeToDo />
+      <ul>
+        {toDos.map((toDo) => <ToDo key={toDo.id} {...toDo}  />)}
+      </ul>
     </div>
   );
 };                                                     
