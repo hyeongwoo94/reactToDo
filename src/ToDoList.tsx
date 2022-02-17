@@ -1,36 +1,29 @@
-import { valueToNode } from "@babel/types";
 import React from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 
+
+interface IForm{
+  toDo:string;
+}
+
 function ToDoList () {
-  const [ToDo, setToDo] = useState("");
-  const [toDoError,setToDoError] = useState("");
-  const onChange =(event:React.FormEvent<HTMLInputElement>) =>{
-    const{
-      currentTarget: {value},
-    } = event;
-    setToDoError("");
-    setToDo(value);
-  };
-  const onSubmit = (event:React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if(ToDo.length < 10) {
-      return setToDoError("최소10글자를 쓰시오");
-    }
-    console.log("submit")
-  };
+  const {register,handleSubmit, setValue} =useForm<IForm>();
+  const handleValid = (data:IForm) => {
+    console.log("추가된 리스트",data.toDo)
+    setValue("toDo","")
+  }
   return (
     <div>
-      <form onSubmit={onSubmit}>
-        <input onChange={onChange} value={ToDo} placeholder="리스트 작성하기" />
+      <form onSubmit={handleSubmit(handleValid)}>
+        <input {...register("toDo",{required:"작성해주세요"})} placeholder="리스트 작성하기" />
         <button>추가하기</button>
-        {toDoError !== "" ? toDoError : null}
+       
       </form>
     </div>
   );
-}
+};                                                     
 
 // const Cantiner = styled.div`
 //   max-width: 468px;
