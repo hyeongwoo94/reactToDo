@@ -1,13 +1,37 @@
-import { IToDo } from "../atoms";
+import React from "react";
+import { useSetRecoilState } from "recoil";
+import { Categories, IToDo, toDoState } from "../atoms";
 
-function ToDo({text}:IToDo){
+function ToDo({text, category, id}:IToDo){
+  const setToDos = useSetRecoilState(toDoState); 
+  const onClick= (event: React.MouseEvent<HTMLButtonElement>) => {
+    const {
+      currentTarget: {name}
+    } =event;
+    setToDos((oldToDos) =>{
+     const targetIndex = oldToDos.findIndex((toDo) => toDo.id ===id)
+      const oldToDo = oldToDos[targetIndex];
+      const newToDo = {text, id, category: name as any}
+      return [...oldToDos.slice(0,targetIndex), newToDo, ...oldToDos.slice(targetIndex+1)];
+    })
+  };
+  const deleteTodo = () => {
+    setToDos((oldToDos) => {
+    const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
+    return [
+    ...oldToDos.slice(0, targetIndex),
+    ...oldToDos.slice(targetIndex + 1),
+    ];
+    });
+    };
   return(
     <>
     <li>
       <span>{text}</span>
-      <button>신규</button>
-      <button>진행중</button>
-      <button>완료</button>
+      {category !== Categories.TO_DO && <button name={Categories.TO_DO} onClick={onClick}>신규</button>}
+      {category !== Categories.DOING && <button name={Categories.DOING} onClick={onClick}>진행중</button>}
+      {category !== Categories.DONE && <button name={Categories.DONE} onClick={onClick}>완료</button>}
+      <button onClick={deleteTodo}>지우기</button>
     </li>
     </>
   )
